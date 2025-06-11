@@ -48,3 +48,23 @@ def tahmin_et(soru):
     padded = pad_sequences(seq, maxlen=X_pad.shape[1], padding='post')
     pred_class = np.argmax(model.predict(padded), axis=-1)
     return le.inverse_transform(pred_class)[0]
+
+# Örnek testler
+print(tahmin_et("İstanbul ne zaman fethedildi?"))
+print(tahmin_et("Türkiye Cumhuriyeti ne zaman kuruldu?"))
+print(tahmin_et("Çanakkale Savaşı hangi yılda gerçekleşti?"))
+print(tahmin_et("İstanbul'un fethi ne zaman oldu?"))
+
+# Kullanıcıdan giriş alma
+def model_ile_soru_sor():
+    print("Modelle tarih sorusu cevaplama başladı! Çıkmak için 'çık' yaz.")
+    while True:
+        soru = input("Soru: ")
+        if soru.lower() == 'çık':
+            print("Görüşürüz!")
+            break
+        tahmin = tahmin_et(soru)
+        print(f"Tahmini yıl: {tahmin}\n")
+
+# Çalıştır
+model_ile_soru_sor()
