@@ -28,3 +28,23 @@ X_pad = pad_sequences(X_seq, padding='post')
 
 # Eğitim ve test setlerine ayır
 X_train, X_test, y_train, y_test = train_test_split(X_pad, y_encoded, test_size=0.2, random_state=42)
+
+# Model oluştur
+model = Sequential()
+model.add(Embedding(input_dim=5000, output_dim=64, input_length=X_pad.shape[1]))
+model.add(LSTM(64))
+model.add(Dense(len(np.unique(y_encoded)), activation='softmax'))
+
+# Modeli derle
+model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.summary()
+
+# Modeli eğit
+model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
+
+# Tahmin fonksiyonu
+def tahmin_et(soru):
+    seq = tokenizer.texts_to_sequences([soru])
+    padded = pad_sequences(seq, maxlen=X_pad.shape[1], padding='post')
+    pred_class = np.argmax(model.predict(padded), axis=-1)
+    return le.inverse_transform(pred_class)[0]
